@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using QuestAPI.Data;
 using QuestAPI.Model;
+using System.Collections.Generic;
+
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace QuestAPI.Controllers
 {
@@ -12,21 +11,44 @@ namespace QuestAPI.Controllers
     [ApiController]
     public class QuotesController : ControllerBase
     {
-        static List<Quotes> _quotes = new List<Quotes>
-        {
-            new Quotes{ID = 1, Author = "kamal", Description = "The Dummy Project", Title = "The Dummy Project"}
-        };
+        private QuotesDbContext _quotesDbContext;
 
-        [HttpGet]
-        public IEnumerable<Quotes> Get()
+        public QuotesController(QuotesDbContext quotesDbContext)
         {
-            return _quotes;
+            _quotesDbContext = quotesDbContext;
+        }
+        // GET: api/<QuotesController>
+        [HttpGet]
+        public IActionResult Get()
+        {
+            //return _quotesDbContext.Quotes;
+
+            return Ok(_quotesDbContext.Quotes);
         }
 
-        [HttpPost]
-        public void Post([FromBody] Quotes quotes)
+        // GET api/<QuotesController>/5
+        [HttpGet("{id}")]
+        public Quotes Get(int id)
         {
-            _quotes.Add(quotes);
+            return _quotesDbContext.Quotes.Find(id);
+        }
+
+        // POST api/<QuotesController>
+        [HttpPost]
+        public void Post([FromBody] string value)
+        {
+        }
+
+        // PUT api/<QuotesController>/5
+        [HttpPut("{id}")]
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+
+        // DELETE api/<QuotesController>/5
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
         }
     }
 }
