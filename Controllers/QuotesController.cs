@@ -2,6 +2,7 @@
 using QuestAPI.Data;
 using QuestAPI.Model;
 using System.Collections.Generic;
+using System.Linq;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,11 +20,27 @@ namespace QuestAPI.Controllers
         }
         // GET: api/<QuotesController>
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string sort)
         {
-            //return _quotesDbContext.Quotes;
+            IQueryable<Quotes> quotes = sort.ToLower() switch
+            {
+                "asc" => _quotesDbContext.Quotes.OrderBy(x => x.CreatedAt),
+                "desc" => _quotesDbContext.Quotes.OrderByDescending(x => x.CreatedAt),
+                _ => _quotesDbContext.Quotes,
+            };
+            ;
 
-            return Ok(_quotesDbContext.Quotes);
+            return Ok(quotes);
+        }
+
+        [HttpGet("[action]")]
+        public IActionResult Paging(int pageNumber, int pageSize)
+        {
+            var quotes = _quotesDbContext.Quotes;
+
+            return Ok(quotes.Skip((pageNumber - 1) * pageSize).Take(pageSize));
+
+
         }
 
         // GET api/<QuotesController>/5
