@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QuestAPI.Data;
 using QuestAPI.Model;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace QuestAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class QuotesController : ControllerBase
     {
         private QuotesDbContext _quotesDbContext;
@@ -20,6 +22,8 @@ namespace QuestAPI.Controllers
         }
         // GET: api/<QuotesController>
         [HttpGet]
+        [AllowAnonymous]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)] //duration is in secs and location ANY means Proxy server and client both.
         public IActionResult Get(string sort)
         {
             IQueryable<Quotes> quotes = sort.ToLower() switch
